@@ -34,6 +34,10 @@ router.post('/download', function (req, res) {
     res.end();
 });
 
-http.createServer(function (req, res) {
-    router(req, res, finalhandler(req, res))
-}).listen(3000);
+module.exports = {
+    listen: function (port) {
+        http.createServer(function (req, res) {
+            router(req, res, finalhandler(req, res))
+        }).listen(port);
+    }
+};
