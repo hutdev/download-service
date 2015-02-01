@@ -1,11 +1,13 @@
 "use strict";
-var finalhandler = require('finalhandler'),
+var Download = require('download'),
+    finalhandler = require('finalhandler'),
     http = require('http'),
     router = require('router')(),
     url = require('url');
 
 router.post('/download', function (req, res) {
-    var query = url.parse(req.url, true).query,
+    var download,
+        query = url.parse(req.url, true).query,
         validateQuery = function () {
             return query
                 && query.get && query.get.match(/^http[s]?:\/\/.+$/)
@@ -16,7 +18,15 @@ router.post('/download', function (req, res) {
         res.writeHead(400);
     }
     else {
-        console.log(query);
+        download = new Download()
+            .get(query.get)
+            .dest(query.dest);
+        download.run(function (err, files) {
+            if (err)
+                console.error(err);
+            else
+                console.log('Download successful.');
+        });
     }
     res.end();
 });
