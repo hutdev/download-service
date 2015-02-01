@@ -14,13 +14,16 @@ router.post('/download', function (req, res) {
                 && query.dest && query.dest.match(/^.+$/);
         };
 
-    if (!validateQuery()) {
+    if (!validateQuery())
         res.writeHead(400);
-    }
     else {
         download = new Download()
             .get(query.get)
             .dest(query.dest);
+
+        if (query.rename && query.rename.match(/^.+$/))
+            download.rename(query.rename);
+
         download.run(function (err, files) {
             if (err)
                 console.error(err);
